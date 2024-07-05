@@ -1,6 +1,6 @@
 // Retrieve username
 // Authorization: Bearer <ACCESS TOKEN>
-GET http://localhost:3000/profile
+GET http://localhost:5001/profile
 Authorization: Bearer 
 
 ###
