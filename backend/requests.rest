@@ -1,0 +1,48 @@
+// Retrieve username
+// Authorization: Bearer <ACCESS TOKEN>
+GET http://localhost:3000/profile
+Authorization: Bearer 
+
+###
+
+// Log out user
+// "token": "<ACCESS TOKEN>"
+DELETE http://localhost:4000/logout
+Content-Type: application/json
+
+{
+    "token": ""
+}
+
+###
+
+// Create refresh token
+// "token": "<ACCESS TOKEN>"
+POST http://localhost:4000/token
+Content-Type: application/json
+
+{
+    "token": ""
+}
+
+###
+
+// Login existing user
+POST http://localhost:4000/login
+Content-Type: application/json
+
+{
+    "username": "",
+    "password": ""
+}
+
+###
+
+// Register new user
+POST http://localhost:4000/register
+Content-Type: application/json
+
+{
+    "username": "",
+    "password": ""
+}
