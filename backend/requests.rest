@@ -1,6 +1,6 @@
 // Retrieve username
 // Authorization: Bearer <ACCESS TOKEN>
-GET http://localhost:5001/profile
+GET http://localhost:4000/profile
 Authorization: Bearer 
 
 ###
@@ -17,7 +17,7 @@ Content-Type: application/json
 ###
 
 // Create refresh token
-// "token": "<ACCESS TOKEN>"
+// "token": "<REFRESH TOKEN>"
 POST http://localhost:4000/token
 Content-Type: application/json
 
@@ -28,6 +28,8 @@ Content-Type: application/json
 ###
 
 // Login existing user
+// "username": "<USERNAME>"
+// "password": "<PASSWORD>"
 POST http://localhost:4000/login
 Content-Type: application/json
 
@@ -39,6 +41,8 @@ Content-Type: application/json
 ###
 
 // Register new user
+// "username": "<USERNAME>"
+// "password": "<PASSWORD>"
 POST http://localhost:4000/register
 Content-Type: application/json
 
