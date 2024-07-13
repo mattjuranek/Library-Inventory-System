@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
@@ -33,15 +33,27 @@ export default function Catalog() {
   const [items, setItems] = useState<(Book | Movie)[]>([]);
   const [itemType, setItemType] = useState('books');
   const [lastItemType, setLastItemType] = useState(itemType);
+  const [page, setPage] = useState(1);
 
-  const searchItems = async () => {
+  useEffect(() => {
+    if (itemType !== lastItemType) {
+      setItems([]);
+      setPage(1);
+      setLastItemType(itemType);
+    }
+  }, [itemType, lastItemType]);
+
+  const searchItems = async (loadMore = false) => {
     try {
+      const newPage = loadMore ? page + 1 : 1;
+      let newItems: (Book | Movie)[] = [];
+
       // Searching books
       if (itemType === 'books') {
         const queryParam = searchType === 'author' ? `inauthor:${query}` : `intitle:${query}`;
-        const res = await fetch(`/api/books?query=${queryParam}`);
+        const res = await fetch(`/api/books?query=${queryParam}&page=${newPage}`);
         const data = await res.json();
-        setItems(data.items || []);
+        newItems = data.items || [];
       } 
       // Searching movies
       else if (itemType === 'movies') {
@@ -49,19 +61,33 @@ export default function Catalog() {
           params: {
             api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
             query: query,
+            page: newPage,
           },
         });
-        setItems(res.data.results || []);
+        newItems = res.data.results || [];
       }
-      setLastItemType(itemType);
+
+      if (loadMore) {
+        setItems((prevItems) => [...prevItems, ...newItems]);
+        setPage(newPage);
+      } else {
+        setItems(newItems);
+        setPage(1);
+      }
     } 
     catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if ( e.key === 'Enter') {
+      searchItems(false);
+    }
+  };
+
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-blue-500">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-blue-500 pb-10">
       <div className="absolute top-5 left-5">
         <Link href="/profile" legacyBehavior>
           <a className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-700 flex items-center">
@@ -94,40 +120,43 @@ export default function Catalog() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder={`Search for ${itemType} by ${searchType}...`}
             className="p-2 w-full border-t border-b border-r border-gray-300 rounded-r"
           />
         </div>
         <button
-          onClick={searchItems}
+          onClick={() => searchItems(false)}
           className="p-2 w-full bg-blue-500 text-white rounded hover:bg-blue-700"
         >
           Search
         </button>
       </div>
       <div id="results" className="w-full max-w-4xl mt-5">
-        {items.length > 0 && lastItemType === itemType && items.map((item) => {
+        {items.length > 0 && items.map((item) => {
           // Display book results
           if (itemType === 'books') {
             const book = item as Book;
             const bookInfo = book.volumeInfo || {};
             return (
-              <div key={book.id} className="item p-4 mb-4 bg-white rounded shadow">
+              <div key={book.id} className="item p-4 mb-4 bg-white rounded shadow flex">
                 {bookInfo.imageLinks && bookInfo.imageLinks.thumbnail ? (
                   <img
                     src={bookInfo.imageLinks.thumbnail}
                     alt={bookInfo.title}
-                    className="mb-2"
+                    className="mr-4 max-w-xs object-contain"
                   />
                 ) : (
-                  <div className="mb-2 h-16 w-12 bg-gray-300 flex items-center justify-center text-gray-500">
+                  <div className="mr-4 h-16 w-12 bg-gray-300 flex items-center justify-center text-gray-500">
                     No Image
                   </div>
                 )}
-                <h3 className="text-lg font-bold">{bookInfo.title}</h3>
-                <p>{bookInfo.authors ? bookInfo.authors.join(', ') : 'Unknown Author'}</p>
-                <p>{bookInfo.publisher ? bookInfo.publisher : 'Unknown Publisher'}, {bookInfo.publishedDate}</p>
-                <p>{bookInfo.description ? bookInfo.description : 'No description available.'}</p>
+                <div>
+                  <h3 className="text-lg font-bold">{bookInfo.title}</h3>
+                  <p>{bookInfo.authors ? bookInfo.authors.join(', ') : 'Unknown Author'}</p>
+                  <p>{bookInfo.publisher ? bookInfo.publisher : 'Unknown Publisher'}, {bookInfo.publishedDate}</p>
+                  <p>{bookInfo.description ? bookInfo.description : 'No description available.'}</p>
+                </div>
               </div>
             );
           } 
@@ -135,20 +164,27 @@ export default function Catalog() {
           else if (itemType === 'movies') {
             const movie = item as Movie;
             return (
-              <div key={movie.id} className="item p-4 mb-4 bg-white rounded shadow">
-                <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.title} className="mb-2" />
-                <h3 className="text-lg font-bold">{movie.title}</h3>
-                <p>Release Date: {movie.release_date}</p>
-                <p>{movie.overview ? movie.overview : 'No overview available.'}</p>
+              <div key={movie.id} className="item p-4 mb-4 bg-white rounded shadow flex">
+                <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.title} className="mr-4 max-w-xs object-contain" />
+                <div>
+                  <h3 className="text-lg font-bold">{movie.title}</h3>
+                  <p>Release Date: {movie.release_date}</p>
+                  <p>{movie.overview ? movie.overview : 'No overview available.'}</p>
+                </div>
               </div>
             );
           }
         })}
       </div>
+      {items.length > 0 && (
+        <button
+          onClick={() => searchItems(true)}
+          className="p-2 mt-1 mb-1 bg-blue-500 text-white rounded hover:bg-blue-700"
+        >
+          Load More
+        </button>
+      )}
       <style jsx>{`
-        .item {
-          margin-bottom: 20px;
-        }
         .item img {
           max-width: 100px;
         }
