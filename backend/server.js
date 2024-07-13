@@ -50,44 +50,51 @@ app.post('/register', async (req, res) => {
 
 // Login existing user
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body
-  try {
-    // Search for user
-    const user = await User.findOne({ username })
-    if (!user) {
-      return res.status(400).send('Cannot find user')
+    const { username, password } = req.body
+    try {
+      // Search for user
+      const user = await User.findOne({ username })
+      if (!user) {
+        return res.status(400).send('Cannot find user')
+      }
+  
+      // Compare password with hashed password
+      const isMatch = await bcrypt.compare(password, user.password)
+      if (!isMatch) {
+        return res.status(401).send('Invalid credentials')
+      }
+  
+      const accessToken = jwt.sign({ username: user.username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
+      const refreshToken = jwt.sign({ username: user.username }, process.env.REFRESH_TOKEN_SECRET)
+      refreshTokens.push(refreshToken)
+  
+      res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'Strict' })
+      res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' })
+      res.json({ accessToken, refreshToken })
+    } 
+    catch (err) {
+      console.error('Error logging in user:', err.message)
+      res.status(500).send('Server error')
     }
-
-    // Compare password with hashed password
-    const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) {
-      return res.status(401).send('Invalid credentials')
-    }
-
-    const accessToken = jwt.sign({ name: username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
-    const refreshToken = jwt.sign({ name: username }, process.env.REFRESH_TOKEN_SECRET)
-    refreshTokens.push(refreshToken)
-
-    res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'Strict' })
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'Strict' })
-    res.json({ accessToken, refreshToken })
-  } 
-  catch (err) {
-    console.error('Error logging in user:', err.message)
-    res.status(500).send('Server error')
-  }
-})
+  })
+  
 
 // Get user profile
 app.get('/profile', (req, res) => {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
   if (!token) return res.sendStatus(401)
+  
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) return res.sendStatus(403)
+    console.log("User data:", user)
     res.json(user)
   })
 })
+
+app.get('/catalog', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+});
 
 // Generate new access token
 app.post('/token', (req, res) => {

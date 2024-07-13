@@ -31,7 +31,6 @@ const Login = () => {
       localStorage.setItem("accessToken", data.accessToken)
       localStorage.setItem("refreshToken", data.refreshToken)
 
-      //TODO: Create profile page to redirect to from login
       router.push("/profile")
     } 
     catch (err) {

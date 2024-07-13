@@ -70,7 +70,7 @@ const Signup = () => {
             Signup
             </button>
         </form>
-        {error && <p className="mt-3 text-red-500">{error}</p>}
+        {error && <p className="mt-3 text-red-500">User already exists</p>}
         {success && <p className="mt-3 text-black">{success}</p>}
         <p className="mt-5 text-white">
             Already have an account? {" "}
