@@ -92,6 +92,11 @@ app.get('/profile', (req, res) => {
   })
 })
 
+// Get calendar page
+app.get('/calendar', (req, res) => {
+  return nextApp.render(req, res, '/calendar', req.query)
+})
+
 app.get('/catalog', (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
