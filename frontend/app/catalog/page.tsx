@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
-import { UserCircleIcon } from '@heroicons/react/24/solid';
+import { UserCircleIcon, CalendarIcon } from '@heroicons/react/24/solid';
 
 interface Book {
   id: string;
@@ -88,11 +88,17 @@ export default function Catalog() {
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-blue-500 pb-10">
-      <div className="absolute top-5 left-5">
+      <div className="absolute top-5 left-5 flex flex-col space-y-2">
         <Link href="/profile" legacyBehavior>
           <a className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-700 flex items-center">
             <UserCircleIcon className="h-6 w-6" />
             <span className="ml-2">Profile</span>
+          </a>
+        </Link>
+        <Link href="/calendar" legacyBehavior>
+          <a className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-700 flex items-center">
+            <CalendarIcon className="h-6 w-6" />
+            <span className="ml-2">Calendar</span>
           </a>
         </Link>
       </div>

@@ -4,6 +4,7 @@
     "@fullcalendar/daygrid": "^6.1.14",
     "@fullcalendar/interaction": "^6.1.14",
     "@fullcalendar/react": "^6.1.14",
+    "@fullcalendar/resource-timeline": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.14",
     "@heroicons/react": "^2.1.5",
     "axios": "^1.7.2",
@@ -18,5 +19,9 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.24.1",
     "typescript": "^5.5.3"
+  },
+  "devDependencies": {
+    "@types/fullcalendar": "^3.8.0",
+    "@types/react": "^18.3.3"
   }
 }
