@@ -4,6 +4,7 @@ const cors = require('cors')
 const connectDB = require('./db')
 const User = require('./User')
 const Book = require('./Book')
+const Event = require('./Event')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser')
@@ -97,6 +98,26 @@ app.get('/profile', (req, res) => {
 app.get('/calendar', (req, res) => {
   return nextApp.render(req, res, '/calendar', req.query)
 })
+
+app.post('/events', async (req, res) => {
+  const { title, description, image, time, date } = req.body;
+  console.log('Event to add:', title);
+  try {
+    const existingEvent = await Event.findOne({ title, date });
+    console.log('Check for existing event:', existingEvent);
+    if (existingEvent) {
+      return res.status(400).json({ message: 'Event already exists' });
+    }
+
+    const newEvent = new Event({ title, description, image, time, date });
+    const savedEvent = await newEvent.save();
+    console.log('New event added:', savedEvent);
+    res.status(201).json({ message: 'Event added', event: savedEvent });
+  } catch (err) {
+    console.error('Error adding event:', err.message, err.stack);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
 app.get('/catalog', (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
