@@ -31,7 +31,16 @@ const Login = () => {
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
 
-      router.push("/catalog");
+      //decode access token to find out role of account 
+      const decodedToken = JSON.parse(atob(data.accessToken.split('.')[1]));
+      const role = decodedToken.role;
+
+      //take to new page based on role
+      if (role == 'admin'){
+        router.push("/admin"); //redirect to admin page
+      }else{
+        router.push("/catalog"); // redirect to catalog
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
