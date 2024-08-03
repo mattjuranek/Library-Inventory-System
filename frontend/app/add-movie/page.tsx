@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const AddBook = () => {
+const AddMovie = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [location, setLocation] = useState("");
@@ -21,7 +21,7 @@ const AddBook = () => {
     setSuccess(null);
 
     try {
-      const response = await fetch("http://localhost:4000/books", {
+      const response = await fetch("http://localhost:4000/movies", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -33,11 +33,11 @@ const AddBook = () => {
 
       if (!response.ok) {
         console.error('Server error response:', data);
-        throw new Error(data.message || "Failed to add book");
+        throw new Error(data.message || "Failed to add movie");
       }
 
       console.log('Server success response:', data);
-      setSuccess("Book added successfully");
+      setSuccess("Movie added successfully");
       setTitle("");
       setAuthor("");
       setLocation("");
@@ -56,7 +56,7 @@ const AddBook = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-blue-200 to-blue-500">
-      <h1 className="mb-5 text-2xl font-bold text-white">Add New Book</h1>
+      <h1 className="mb-5 text-2xl font-bold text-white">Add New Movie</h1>
       <form className="flex flex-col" onSubmit={handleSubmit}>
         <input
           type="text"
@@ -106,7 +106,7 @@ const AddBook = () => {
           type="submit"
           className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
         >
-          Add Book
+          Add Movie
         </button>
       </form>
       {error && <p className="mt-3 text-red-500">{error}</p>}
@@ -124,4 +124,4 @@ const AddBook = () => {
   );
 };
 
-export default AddBook;
+export default AddMovie;

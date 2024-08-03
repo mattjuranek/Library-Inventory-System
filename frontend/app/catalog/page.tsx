@@ -6,25 +6,23 @@ import axios from 'axios';
 import { UserCircleIcon, CalendarIcon } from '@heroicons/react/24/solid';
 
 interface Book {
-  id: string;
-  volumeInfo: {
-    title: string;
-    authors?: string[];
-    publisher?: string;
-    publishedDate?: string;
-    description?: string;
-    imageLinks?: {
-      thumbnail?: string;
-    };
-  };
+  _id: string;
+  title: string;
+  author: string;
+  location?: string;
+  genre?: string;
+  description?: string;
+  quantity: number;
 }
 
 interface Movie {
-  id: string;
+  _id: string;
   title: string;
-  release_date: string;
-  overview: string;
-  poster_path: string;
+  author: string;
+  location?: string;
+  genre?: string;
+  description?: string;
+  quantity: number;
 }
 
 export default function Catalog() {
@@ -47,24 +45,18 @@ export default function Catalog() {
     try {
       const newPage = loadMore ? page + 1 : 1;
       let newItems: (Book | Movie)[] = [];
+      const searchParams = { [searchType]: query };
 
-      // Searching books
       if (itemType === 'books') {
-        const queryParam = searchType === 'author' ? `inauthor:${query}` : `intitle:${query}`;
-        const res = await fetch(`/api/books?query=${queryParam}&page=${newPage}`);
-        const data = await res.json();
-        newItems = data.items || [];
-      } 
-      // Searching movies
-      else if (itemType === 'movies') {
-        const res = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
-          params: {
-            api_key: process.env.NEXT_PUBLIC_TMDB_API_KEY,
-            query: query,
-            page: newPage,
-          },
+        const res = await axios.get(`http://localhost:4000/books/search`, {
+          params: searchParams,
         });
-        newItems = res.data.results || [];
+        newItems = res.data || [];
+      } else if (itemType === 'movies') {
+        const res = await axios.get(`http://localhost:4000/movies/search`, {
+          params: searchParams,
+        });
+        newItems = res.data || [];
       }
 
       if (loadMore) {
@@ -74,14 +66,13 @@ export default function Catalog() {
         setItems(newItems);
         setPage(1);
       }
-    } 
-    catch (error) {
+    } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if ( e.key === 'Enter') {
+    if (e.key === 'Enter') {
       searchItems(false);
     }
   };
@@ -117,10 +108,12 @@ export default function Catalog() {
             value={searchType}
             onChange={(e) => setSearchType(e.target.value)}
             className="p-2 border border-gray-300"
-            disabled={itemType === 'movies'}
           >
             <option value="title">Title</option>
             <option value="author">Author</option>
+            <option value="location">Location</option>
+            <option value="genre">Genre</option>
+            <option value="quantity"># Copies</option>
           </select>
           <input
             type="text"
@@ -140,49 +133,38 @@ export default function Catalog() {
       </div>
       <div id="results" className="w-full max-w-4xl mt-5">
         {items.length > 0 && items.map((item) => {
-          // Display book results
           if (itemType === 'books') {
             const book = item as Book;
-            const bookInfo = book.volumeInfo || {};
             return (
-              <div key={book.id} className="item p-4 mb-4 bg-white rounded shadow flex">
-                {bookInfo.imageLinks && bookInfo.imageLinks.thumbnail ? (
-                  <img
-                    src={bookInfo.imageLinks.thumbnail}
-                    alt={bookInfo.title}
-                    className="mr-4 max-w-xs object-contain"
-                  />
-                ) : (
-                  <div className="mr-4 h-16 w-12 bg-gray-300 flex items-center justify-center text-gray-500">
-                    No Image
-                  </div>
-                )}
+              <div key={book._id} className="item p-4 mb-4 bg-white rounded shadow flex">
                 <div>
-                  <h3 className="text-lg font-bold">{bookInfo.title}</h3>
-                  <p>{bookInfo.authors ? bookInfo.authors.join(', ') : 'Unknown Author'}</p>
-                  <p>{bookInfo.publisher ? bookInfo.publisher : 'Unknown Publisher'}, {bookInfo.publishedDate}</p>
-                  <p>{bookInfo.description ? bookInfo.description : 'No description available.'}</p>
+                  <h3 className="text-lg font-bold">{book.title}</h3>
+                  <p>Author: {book.author}</p>
+                  <p>Location: {book.location || 'Unknown'}</p>
+                  <p>Genre: {book.genre || 'Unknown'}</p>
+                  <p>Description: {book.description || 'No description available.'}</p>
+                  <p>Copies: {book.quantity}</p>
                 </div>
               </div>
             );
-          } 
-          // Display movie results
-          else if (itemType === 'movies') {
+          } else if (itemType === 'movies') {
             const movie = item as Movie;
             return (
-              <div key={movie.id} className="item p-4 mb-4 bg-white rounded shadow flex">
-                <img src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} alt={movie.title} className="mr-4 max-w-xs object-contain" />
+              <div key={movie._id} className="item p-4 mb-4 bg-white rounded shadow flex">
                 <div>
                   <h3 className="text-lg font-bold">{movie.title}</h3>
-                  <p>Release Date: {movie.release_date}</p>
-                  <p>{movie.overview ? movie.overview : 'No overview available.'}</p>
+                  <p>Author: {movie.author}</p>
+                  <p>Location: {movie.location || 'Unknown'}</p>
+                  <p>Genre: {movie.genre || 'Unknown'}</p>
+                  <p>Description: {movie.description || 'No description available.'}</p>
+                  <p>Copies: {movie.quantity}</p>
                 </div>
               </div>
             );
           }
         })}
       </div>
-      {items.length > 0 && (
+      {items.length > 0 && (      //TODO: Fix load more button
         <button
           onClick={() => searchItems(true)}
           className="p-2 mt-1 mb-1 bg-blue-500 text-white rounded hover:bg-blue-700"
@@ -190,11 +172,6 @@ export default function Catalog() {
           Load More
         </button>
       )}
-      <style jsx>{`
-        .item img {
-          max-width: 100px;
-        }
-      `}</style>
     </div>
   );
 }

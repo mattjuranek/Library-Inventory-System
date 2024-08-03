@@ -4,6 +4,7 @@ const cors = require('cors')
 const connectDB = require('./db')
 const User = require('./User')
 const Book = require('./Book')
+const Movie = require('./Movie')
 const Event = require('./Event')
 const Admin = require('./Admin')
 const jwt = require('jsonwebtoken')
@@ -127,27 +128,6 @@ app.get('/catalog', (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
-// Add new book to catalog
-app.post('/books', async (req, res) => {
-  const { title, author, publisher, publishedDate, description, imageLinks, quantity } = req.body;
-  console.log('Book to add:', title);
-  try {
-    const existingBook = await Book.findOne({ title, author });
-    console.log('Check for existing book:', existingBook);
-    if (existingBook) {
-      return res.status(400).json({ message: 'Book already exists' });
-    }
-
-    const newBook = new Book({ title, author, publisher, publishedDate, description, imageLinks, quantity });
-    const savedBook = await newBook.save();
-    console.log('New book added:', savedBook);
-    res.status(201).json({ message: 'Book added', book: savedBook });
-  } catch (err) {
-    console.error('Error adding book:', err.message, err.stack);
-    res.status(500).json({ message: 'Server error', error: err.message });
-  }
-});
-
 // Generate new access token
 app.post('/token', (req, res) => {
   const { token } = req.body
@@ -171,6 +151,105 @@ app.delete('/logout', (req, res) => {
   refreshTokens = refreshTokens.filter(t => t !== token)
   res.sendStatus(204)
 })
+
+// Add new book to catalog
+app.post('/books', async (req, res) => {
+  const { title, author, location, genre, description, quantity } = req.body;
+  console.log('Book to add:', title);
+  try {
+    const existingBook = await Book.findOne({ title, author });
+    console.log('Check for existing book:', existingBook);
+    if (existingBook) {
+      return res.status(400).json({ message: 'Book already exists' });
+    }
+
+    const newBook = new Book({ title, author, location, genre, description, quantity });
+    const savedBook = await newBook.save();
+    console.log('New book added:', savedBook);
+    res.status(201).json({ message: 'Book added', book: savedBook });
+  } catch (err) {
+    console.error('Error adding book:', err.message, err.stack);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+app.get('/books/search', async (req, res) => {
+  const { title, author, location, genre, quantity } = req.query;
+  let filter = {};
+
+  if (title) {
+    filter.title = { $regex: title, $options: 'i' };
+  }
+  if (author) {
+    filter.author = { $regex: author, $options: 'i' };
+  }
+  if (location) {
+    filter.location = { $regex: location, $options: 'i' };
+  }
+  if (genre) {
+    filter.genre = { $regex: genre, $options: 'i' };
+  }
+  if (quantity) {
+    filter.quantity = { $gte: parseInt(quantity, 10) };
+  }
+
+  try {
+    const books = await Book.find(filter);
+    res.json(books);
+  } catch (err) {
+    console.error('Error searching books:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+app.post('/movies', async (req, res) => {
+  const { title, author, location, genre, description, quantity } = req.body;
+  console.log('Movie to add:', title);
+  try {
+    const existingMovie = await Movie.findOne({ title, author });
+    console.log('Check for existing movie:', existingMovie);
+    if (existingMovie) {
+      return res.status(400).json({ message: 'Movie already exists' });
+    }
+
+    const newMovie = new Movie({ title, author, location, genre, description, quantity });
+    const savedMovie = await newMovie.save();
+    console.log('New movie added:', savedMovie);
+    res.status(201).json({ message: 'Movie added', movie: savedMovie });
+  } catch (err) {
+    console.error('Error adding movie:', err.message, err.stack);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+app.get('/movies/search', async (req, res) => {
+  const { title, author, location, genre, quantity } = req.query;
+  let filter = {};
+
+  if (title) {
+    filter.title = { $regex: title, $options: 'i' };
+  }
+  if (author) {
+    filter.author = { $regex: author, $options: 'i' };
+  }
+  if (location) {
+    filter.location = { $regex: location, $options: 'i' };
+  }
+  if (genre) {
+    filter.genre = { $regex: genre, $options: 'i' };
+  }
+  if (quantity) {
+    filter.quantity = { $gte: parseInt(quantity, 10) };
+  }
+
+  try {
+    const movies = await Movie.find(filter);
+    res.json(movies);
+  } catch (err) {
+    console.error('Error searching movies:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
 const PORT = process.env.PORT || 4000
 
