@@ -56,70 +56,70 @@ const AddBook = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-blue-200 to-blue-500">
-      <h1 className="mb-5 text-2xl font-bold text-white">Add New Book</h1>
-      <form className="flex flex-col" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Title"
-          required
-          className="mb-3 p-2 border border-gray-300 rounded"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Author"
-          required
-          className="mb-3 p-2 border border-gray-300 rounded"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Location"
-          className="mb-3 p-2 border border-gray-300 rounded"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Genre"
-          className="mb-3 p-2 border border-gray-300 rounded"
-          value={genre}
-          onChange={(e) => setGenre(e.target.value)}
-        />
-        <textarea
-          placeholder="Description"
-          className="mb-3 p-2 border border-gray-300 rounded"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Quantity"
-          required
-          className="mb-3 p-2 border border-gray-300 rounded"
-          value={quantity}
-          onChange={(e) => setQuantity(parseInt(e.target.value))}
-        />
-        <button
-          type="submit"
-          className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-        >
-          Add Book
-        </button>
-      </form>
-      {error && <p className="mt-3 text-red-500">{error}</p>}
-      {success && <p className="mt-3 text-black">{success}</p>}
-      <p className="mt-5 text-white">
-        Return to {" "}
-        <Link
-          href="/"
-          className="text-blue-800 transition hover:text-blue-300 hover:underline"
-        >
-          Home
-        </Link>
-      </p>
+        <h1 className="mb-5 text-2xl font-bold text-white">Add New Book</h1>
+        <form className="flex flex-col" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Title"
+              required
+              className="mb-3 p-2 border border-gray-300 rounded"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Author"
+              required
+              className="mb-3 p-2 border border-gray-300 rounded"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Location"
+              className="mb-3 p-2 border border-gray-300 rounded"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Genre"
+              className="mb-3 p-2 border border-gray-300 rounded"
+              value={genre}
+              onChange={(e) => setGenre(e.target.value)}
+            />
+            <textarea
+              placeholder="Description"
+              className="mb-3 p-2 border border-gray-300 rounded"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <input
+              type="number"
+              placeholder="Quantity"
+              required
+              className="mb-3 p-2 border border-gray-300 rounded"
+              value={quantity}
+              onChange={(e) => setQuantity(parseInt(e.target.value))}
+            />
+            <button
+              type="submit"
+              className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+            >
+              Add Book
+            </button>
+        </form>
+        {error && <p className="mt-3 text-red-500">{error}</p>}
+        {success && <p className="mt-3 text-black">{success}</p>}
+        <p className="mt-5 text-white">
+            Return to {" "}
+            <Link
+              href= "/"
+              className="text-blue-800 transition hover:text-blue-300 hover:underline"
+            >
+              Home
+            </Link>
+        </p>
     </div>
   );
 };

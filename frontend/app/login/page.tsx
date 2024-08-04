@@ -38,8 +38,10 @@ const Login = () => {
       //take to new page based on role
       if (role == 'admin'){
         router.push("/admin"); //redirect to admin page
+      }else if(role == 'employee'){
+        router.push("/employee"); // redirect to employee page
       }else{
-        router.push("/catalog"); // redirect to catalog
+        router.push("/catalog")
       }
     } catch (err) {
       if (err instanceof Error) {
