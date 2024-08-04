@@ -117,22 +117,69 @@ app.get('/calendar', (req, res) => {
   return nextApp.render(req, res, '/calendar', req.query)
 })
 
+// Add events
 app.post('/events', async (req, res) => {
   const { title, description, image, time, date } = req.body;
   console.log('Event to add:', title);
   try {
     const existingEvent = await Event.findOne({ title, date });
-    console.log('Check for existing event:', existingEvent);
     if (existingEvent) {
       return res.status(400).json({ message: 'Event already exists' });
     }
-
     const newEvent = new Event({ title, description, image, time, date });
     const savedEvent = await newEvent.save();
     console.log('New event added:', savedEvent);
     res.status(201).json({ message: 'Event added', event: savedEvent });
   } catch (err) {
     console.error('Error adding event:', err.message, err.stack);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Get events
+app.get('/events', async (req, res) => {
+  try {
+    const events = await Event.find();
+    res.status(200).json(events);
+  } catch (err) {
+    console.error('Error fetching events:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Delete event
+app.delete('/events', async (req, res) => {
+  const { title, date } = req.body;
+  try {
+    const event = await Event.findOneAndDelete({ title, date });
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    res.status(200).json({ message: 'Event removed successfully' });
+  } catch (err) {
+    console.error('Error removing event:', err.message);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
+
+// Update event
+app.put('/events', async (req, res) => {
+  const { title, newTitle, newDescription, newImage, newTime, newDate } = req.body;
+
+  try {
+    const event = await Event.findOneAndUpdate(
+      { title },
+      { title: newTitle, description: newDescription, image: newImage, time: newTime, date: newDate },
+      { new: true }
+    );
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    res.status(200).json({ message: 'Event updated successfully', event });
+  } catch (err) {
+    console.error('Error updating event:', err.message);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });

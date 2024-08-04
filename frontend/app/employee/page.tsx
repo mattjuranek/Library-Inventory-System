@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
-import { UserCircleIcon, CalendarIcon } from '@heroicons/react/24/solid';
+import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 const Employee = () => {
   return (
@@ -35,6 +35,12 @@ const Employee = () => {
         </Link>
         <Link href='/add-member' className='mb-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700 text-center'>
           Add Member
+        </Link>
+        <Link href='/add-event' className='mb-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700 text-center'>
+          Add Event
+        </Link>
+        <Link href='/remove-event' className='mb-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700 text-center'>
+          Remove Event
         </Link>
       </div>
     </div>

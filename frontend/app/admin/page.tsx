@@ -45,6 +45,15 @@ const Admin = () => {
                 <Link href='/delete-employee-member' className='mb-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700 text-center'>
                     Delete Account
                 </Link>
+                <Link href='/add-event' className='mb-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700 text-center'>
+                    Add Event
+                </Link>
+                <Link href='/remove-event' className='mb-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700 text-center'>
+                    Remove Event
+                </Link>
+                <Link href='/update-event' className='mb-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700 text-center'>
+                    Update Event
+                </Link>
             </div>
         </div>
     );

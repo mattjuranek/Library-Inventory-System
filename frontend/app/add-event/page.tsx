@@ -1,23 +1,22 @@
-"use client"
+"use client";
 
-import Link from 'next/link'
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const AddEvent = () => {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [image, setImage] = useState("")
-  const [time, setTime] = useState("")
-  const [date, setDate] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const router = useRouter()
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [time, setTime] = useState("");
+  const [date, setDate] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(null)
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
 
     try {
       const response = await fetch("http://localhost:4000/events", {
@@ -25,32 +24,31 @@ const AddEvent = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ title, description, image, time, date })
-      })
+        body: JSON.stringify({ title, description, time, date })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        console.error('Server error response:', data)
-        throw new Error(data.message || "Failed to add event")
+        console.error('Server error response:', data);
+        throw new Error(data.message || "Failed to add event");
       }
 
-      console.log('Server success response:', data)
-      setSuccess("Event added successfully")
-      setTitle("")
-      setDescription("")
-      setImage("")
-      setTime("")
-      setDate("")
+      console.log('Server success response:', data);
+      setSuccess("Event added successfully");
+      setTitle("");
+      setDescription("");
+      setTime("");
+      setDate("");
 
     } catch (err) {
       if (err instanceof Error) {
-        setError(err.message)
+        setError(err.message);
       } else {
-        setError("An unexpected error occurred")
+        setError("An unexpected error occurred");
       }
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-r from-blue-200 to-blue-500">
@@ -73,14 +71,7 @@ const AddEvent = () => {
             />
             <input
               type="text"
-              placeholder="Image URL"
-              className="mb-3 p-2 border border-gray-300 rounded"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Time"
+              placeholder="Time (HH:MM)"
               required
               className="mb-3 p-2 border border-gray-300 rounded"
               value={time}
@@ -88,7 +79,7 @@ const AddEvent = () => {
             />
             <input
               type="text"
-              placeholder="Date"
+              placeholder="Date (YYYY-MM-DD)"
               required
               className="mb-3 p-2 border border-gray-300 rounded"
               value={date}
@@ -106,14 +97,14 @@ const AddEvent = () => {
         <p className="mt-5 text-white">
             Return to {" "}
             <Link
-              href="/"
+              href= "/"
               className="text-blue-800 transition hover:text-blue-300 hover:underline"
             >
               Home
             </Link>
         </p>
     </div>
-  )
-}
+  );
+};
 
-export default AddEvent
+export default AddEvent;
