@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { MagnifyingGlassIcon, ClipboardIcon, ArrowRightOnRectangleIcon, CalendarIcon } from '@heroicons/react/24/solid';
 
 const Profile = () => {
   const [user, setUser] = useState<{ username: string } | null>(null);
@@ -54,22 +54,35 @@ const Profile = () => {
   }
 
   return (
-    <div className="relative flex flex-col items-center justify-center h-screen bg-gradient-to-r from-blue-200 to-blue-500">
-      <div className="absolute top-5 left-5">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-blue-500">
+      <div className="absolute top-5 left-5 flex flex-col space-y-2">
         <Link href="/catalog" legacyBehavior>
-          <a className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-700 flex items-center justify-center">
+          <a className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-700 flex items-center">
             <MagnifyingGlassIcon className="h-6 w-6" />
             <span className="ml-2">Search</span>
           </a>
         </Link>
+        <Link href="/calendar" legacyBehavior>
+          <a className="p-2 bg-blue-500 text-white rounded-full hover:bg-blue-700 flex items-center">
+            <CalendarIcon className="h-6 w-6" />
+            <span className="ml-2">Calendar</span>
+          </a>
+        </Link>
       </div>
       <h1 className="mb-5 text-2xl font-bold text-white">Profile</h1>
-      <div className="flex flex-col items-center justify-center p-5 rounded bg-transparent">
-        <p className="mb-3 text-white">Username: {user.username}</p>
+      <div className="flex flex-col items-center justify-center p-5 rounded bg-white shadow-lg">
+        <p className="mb-3 text-gray-800">User: <span className="font-semibold">{user.username}</span></p>
+        <Link href="/checked-out-items" legacyBehavior>
+          <a className="mb-3 p-2 bg-blue-500 text-white rounded hover:bg-blue-700 flex items-center">
+            <ClipboardIcon className="h-6 w-6" />
+            <span className="ml-2">Checked Out Items</span>
+          </a>
+        </Link>
         <button
           onClick={handleLogout}
-          className="p-2 bg-red-500 text-white rounded hover:bg-red-700"
+          className="p-2 bg-red-500 text-white rounded hover:bg-red-700 transition flex items-center"
         >
+          <ArrowRightOnRectangleIcon className="h-6 w-6 mr-2" />
           Logout
         </button>
       </div>
