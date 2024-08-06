@@ -299,7 +299,6 @@ app.delete('/member/:username', async (req, res) => {
   }
 })
 
-
 //remove book
 app.delete('/books', async (req, res) => {
   const { title, author } = req.body
@@ -320,7 +319,6 @@ app.delete('/books', async (req, res) => {
     res.status(500).json({ message: 'Server error', error: err.message })
   }
 })
-
 
 // Generate new access token
 app.post('/token', (req, res) => {
